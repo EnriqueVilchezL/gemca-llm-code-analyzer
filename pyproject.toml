@@ -1,0 +1,27 @@
+[project]
+name = "llm-iso-5055"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dotenv>=0.9.9",
+    "google-genai>=1.24.0",
+    "google-generativeai>=0.8.5",
+    "gradio>=5.30.0",
+    "ipykernel>=6.29.5",
+    "langchain>=0.3.25",
+    "langchain-community>=0.3.23",
+    "matplotlib2tikz>=0.7.6",
+    "nbformat>=5.10.4",
+    "pandas>=2.2.3",
+    "polars>=1.30.0",
+    "pypdf2>=3.0.1",
+    "requests>=2.32.3",
+    "scipy>=1.15.3",
+    "seaborn>=0.13.2",
+    "statprocon>=1.0.2",
+    "statsmodels>=0.14.4",
+    "tikzplotlib>=0.10.1",
+    "tikzplotlib-patched>=0.10.1.post13",
+]

@@ -1,0 +1,136 @@
+% This file was created with tikzplotlib v0.10.1.post13.
+\begin{tikzpicture}
+
+\definecolor{darkblue}{RGB}{0,0,139}
+\definecolor{darkgrey176}{RGB}{176,176,176}
+\definecolor{green}{RGB}{0,128,0}
+\definecolor{lightgrey204}{RGB}{204,204,204}
+\definecolor{orange}{RGB}{255,165,0}
+
+\begin{groupplot}[group style={group size=1 by 2}]
+\nextgroupplot[
+legend cell align={left},
+legend style={fill opacity=0.8, draw opacity=1, text opacity=1, draw=lightgrey204},
+scaled x ticks=manual:{}{\pgfmathparse{#1}},
+tick align=outside,
+tick pos=left,
+title={Individuals (X) Chart with ABC Zones},
+x grid style={darkgrey176},
+xmajorgrids,
+xmin=-0.7, xmax=14.7,
+xtick style={color=black},
+xticklabels={},
+y grid style={darkgrey176},
+ylabel={Accuracy},
+ymajorgrids,
+ymin=74.2086, ymax=87.7914,
+ytick style={color=black}
+]
+\addplot [semithick, darkblue, mark=*, mark size=3, mark options={solid}]
+table {%
+0 85
+1 78
+2 79.5
+3 81
+4 81
+5 78.5
+6 83
+7 82
+8 75.5
+9 79
+10 81
+11 82.5
+12 82.5
+13 83
+14 83.5
+};
+\addlegendentry{Accuracy}
+\addplot [semithick, green, dashed]
+table {%
+-0.7 81
+14.7 81
+};
+\addlegendentry{Center Line (X̄=81.00)}
+\addplot [semithick, red, dashed]
+table {%
+-0.7 87.174
+14.7 87.174
+};
+\addlegendentry{UCL (87.17)}
+\addplot [semithick, red, dashed]
+table {%
+-0.7 74.826
+14.7 74.826
+};
+\addlegendentry{LCL (74.83)}
+\addplot [thick, orange, opacity=0.6, dotted, forget plot]
+table {%
+-0.7 83.058
+14.7 83.058
+};
+\addplot [thick, orange, opacity=0.6, dotted, forget plot]
+table {%
+-0.7 78.942
+14.7 78.942
+};
+\addplot [thick, orange, opacity=0.6, dotted, forget plot]
+table {%
+-0.7 85.116
+14.7 85.116
+};
+\addplot [thick, orange, opacity=0.6, dotted, forget plot]
+table {%
+-0.7 76.884
+14.7 76.884
+};
+
+\nextgroupplot[
+legend cell align={left},
+legend style={fill opacity=0.8, draw opacity=1, text opacity=1, draw=lightgrey204},
+tick align=outside,
+tick pos=left,
+title={Moving Range (mR) Chart},
+x grid style={darkgrey176},
+xlabel={Iteration},
+xmajorgrids,
+xmin=-0.7, xmax=14.7,
+xtick style={color=black},
+y grid style={darkgrey176},
+ylabel={mR},
+ymajorgrids,
+ymin=-0.37925, ymax=7.96425,
+ytick style={color=black}
+]
+\addplot [semithick, darkblue, mark=square*, mark size=3, mark options={solid}]
+table {%
+1 7
+2 1.5
+3 1.5
+4 0
+5 2.5
+6 4.5
+7 1
+8 6.5
+9 3.5
+10 2
+11 1.5
+12 0
+13 0.5
+14 0.5
+};
+\addlegendentry{Moving Range}
+\addplot [semithick, green, dashed]
+table {%
+-0.7 2.321
+14.7 2.321
+};
+\addlegendentry{Center Line (mR=2.32)}
+\addplot [semithick, red, dashed]
+table {%
+-0.7 7.585
+14.7 7.585
+};
+\addlegendentry{UCL (7.58)}
+\end{groupplot}
+
+\end{tikzpicture}
