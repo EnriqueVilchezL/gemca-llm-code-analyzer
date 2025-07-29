@@ -136,10 +136,7 @@ def send_code_to_llm(code: str, verbose: bool = True) -> str:
     llm = GenAIEvaluator(
         model=genai.GenerativeModel(
             "gemini-2.0-flash",
-            system_instruction=SYSTEM_PROMPT.format(standard=STANDARD_TEXT),
-            generation_config={
-                "temperature": 0,
-            }
+            system_instruction=SYSTEM_PROMPT.format(standard=STANDARD_TEXT)
         ),
         human_prompt=HUMAN_PROMPT,
     )

@@ -5,5 +5,5 @@ class GenAIEvaluator:
 
     def evaluate(self, input_variables: dict[str, str]) -> str:
         formatted_prompt = self.human_prompt.format(**input_variables)
-        response = self.model.generate_content(formatted_prompt, generation_config={"temperature": 0})
+        response = self.model.generate_content(formatted_prompt)
         return response.text
