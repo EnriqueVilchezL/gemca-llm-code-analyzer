@@ -17,7 +17,9 @@ from google.genai import types
 
 # Load environment variables
 load_dotenv()
-genai.configure(api_key=os.getenv("API_KEY"))
+API_KEYS : list = os.getenv("API_KEYS")
+API_KEY_INDEX = 0
+genai.configure(API_KEYS[API_KEY_INDEX])
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -132,14 +134,28 @@ def send_code_to_llm(code: str, verbose: bool = True) -> str:
 
     # payload = {"standard": STANDARD_TEXT, "code_snippet": code}
     # response = llm.evaluate(payload)
+    try:
+        llm = GenAIEvaluator(
+            model=genai.GenerativeModel(
+                "gemini-2.0-flash",
+                system_instruction=SYSTEM_PROMPT.format(standard=STANDARD_TEXT)
+            ),
+            human_prompt=HUMAN_PROMPT,
+        )
+    except Exception as e:
+        API_KEY_INDEX += 1
+        if len(API_KEYS) <= API_KEY_INDEX:
+            API_KEY_INDEX = 0
+            raise e
+        genai.configure(API_KEYS[API_KEY_INDEX])
+        llm = GenAIEvaluator(
+            model=genai.GenerativeModel(
+                "gemini-2.0-flash",
+                system_instruction=SYSTEM_PROMPT.format(standard=STANDARD_TEXT)
+            ),
+            human_prompt=HUMAN_PROMPT,
+        )
 
-    llm = GenAIEvaluator(
-        model=genai.GenerativeModel(
-            "gemini-2.0-flash",
-            system_instruction=SYSTEM_PROMPT.format(standard=STANDARD_TEXT)
-        ),
-        human_prompt=HUMAN_PROMPT,
-    )
     payload = {"code_snippet": code}
     response = llm.evaluate(input_variables=payload)
 
