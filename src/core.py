@@ -16,7 +16,7 @@ import google.generativeai as genai
 from google.genai import types
 
 # Load environment variables
-load_dotenv()
+load_dotenv(".env")
 API_KEYS : list = os.getenv("API_KEYS")
 API_KEY_INDEX = 0
 genai.configure(API_KEYS[API_KEY_INDEX])
