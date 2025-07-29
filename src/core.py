@@ -11,7 +11,9 @@ from dotenv import load_dotenv
 from zip_processor import ZipFileProcessor
 from llm_evaluator import GenAIEvaluator
 from system_prompt import SYSTEM_PROMPT
+from human_prompt import HUMAN_PROMPT
 import google.generativeai as genai
+from google.genai import types
 
 # Load environment variables
 load_dotenv()
@@ -22,7 +24,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 if not logger.hasHandlers():
     handler = logging.StreamHandler()
-    formatter = logging.Formatter('%(asctime)s %(levelname)s %(name)s: %(message)s')
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s")
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
@@ -86,6 +88,7 @@ def extract_standard_text() -> str:
 
     return combined_text
 
+
 # Preloaded standard text
 STANDARD_TEXT = extract_standard_text()
 
@@ -103,6 +106,7 @@ def save_uploaded_zip(gradio_file) -> str:
     temp_path = tempfile.NamedTemporaryFile(suffix=".zip", delete=False).name
     shutil.copy(gradio_file.name, temp_path)
     return temp_path
+
 
 def send_code_to_llm(code: str, verbose: bool = True) -> str:
     """
@@ -130,16 +134,23 @@ def send_code_to_llm(code: str, verbose: bool = True) -> str:
     # response = llm.evaluate(payload)
 
     llm = GenAIEvaluator(
-        model=genai.GenerativeModel("gemini-2.0-flash"),
-        system_prompt=SYSTEM_PROMPT,
+        model=genai.GenerativeModel(
+            "gemini-2.0-flash",
+            system_instruction=SYSTEM_PROMPT.format(standard=STANDARD_TEXT),
+            generation_config={
+                "temperature": 0,
+            }
+        ),
+        human_prompt=HUMAN_PROMPT,
     )
-    payload = {"standard": STANDARD_TEXT, "code_snippet": code}
+    payload = {"code_snippet": code}
     response = llm.evaluate(input_variables=payload)
-    
+
     if verbose:
         logger.info(f"LLM response: {response}")
 
     return response
+
 
 def evaluate_zip(zip_path: str, verbose: bool = True) -> str:
     """
@@ -181,7 +192,7 @@ def parse_json(s):
         logger.error(f"Failed to parse JSON: {e}")
         raise ValueError(f"Invalid JSON format: {e}") from e
         return None
-    
+
 
 def parse_xml(s: str) -> list:
     """
@@ -204,20 +215,24 @@ def parse_xml(s: str) -> list:
             # Match content between opening and closing tags for each field
             match = re.search(rf"<{field}>(.*?)</{field}>", issue, re.DOTALL)
             if match:
-                parsed[field] = (match.group(1).strip()
+                parsed[field] = (
+                    match.group(1)
+                    .strip()
                     .replace("&amp;", "&")
                     .replace("&lt;", "<")
                     .replace("&gt;", ">")
                     .replace("&quot;", '"')
-                    .replace("&apos;", "'"))
-                
+                    .replace("&apos;", "'")
+                )
+
             else:
                 parsed[field] = None
 
         parsed_issues.append(parsed)
 
     return parsed_issues
-    
+
+
 def parse_response_to_dataframe(response: str) -> pd.DataFrame:
     """
     Parses the LLM's JSON response into a Pandas DataFrame.

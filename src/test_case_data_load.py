@@ -18,30 +18,45 @@ def format_sarif_and_src(sarif_data, src_data):
     if sarif_data.get("properties", {}).get("status", "") != "deprecated":
         # Format the SARIF and source data into a dictionary
         for run in sarif_data.get("runs", []):
-            for result in run.get("results", []):
-                
-                rule_id = result.get("ruleId", "Unknown")
-                
-                for location in result.get("locations", []):
-                    data = {
-                        "Weakness": "Unknown",
-                        "File": "Unknown",
-                        "Line": "Unknown",
-                        "Source": "Unknown"
-                    }
-                    physical_location = location.get("physicalLocation", {})
-                    artifact_location = physical_location.get("artifactLocation", {})
-                    uri = artifact_location.get("uri", "")
+            if sarif_data.get("properties", {}).get("state", "") == "bad":
+                for result in run.get("results", []):
                     
-                    if uri and rule_id in cwe_list:
-                        source_lines = src_data.splitlines()
-                        start_line = int(physical_location.get("region", {}).get("startLine", 0))
+                    rule_id = result.get("ruleId", "Unknown")
+                    
+                    for location in result.get("locations", []):
+                        data = {
+                            "Weakness": "Unknown",
+                            "File": "Unknown",
+                            "Line": "Unknown",
+                            "Source": "Unknown"
+                        }
+                        physical_location = location.get("physicalLocation", {})
+                        artifact_location = physical_location.get("artifactLocation", {})
+                        uri = artifact_location.get("uri", "")
+                        
+                        if uri and rule_id in cwe_list:
+                            source_lines = src_data.splitlines()
+                            start_line = int(physical_location.get("region", {}).get("startLine", 0))
 
-                        data["File"] = uri
-                        data["Weakness"] = rule_id
-                        data["Line"] = remove_comments(source_lines[start_line - 1].strip() if start_line - 1 <= len(source_lines) else "Unknown")
-                        data["Source"] = remove_comments(src_data)
-                        formatted_data.append(data)
+                            data["File"] = uri
+                            data["Weakness"] = rule_id
+                            data["Line"] = remove_comments(source_lines[start_line - 1].strip() if start_line - 1 <= len(source_lines) else "Unknown")
+                            data["Source"] = remove_comments(src_data)
+                            formatted_data.append(data)
+
+            # It is a safe file
+            elif sarif_data.get("properties", {}).get("state", "") == "good":
+                data = {
+                    "Weakness": "Unknown",
+                    "File": "Unknown",
+                    "Line": "Unknown",
+                    "Source": "Unknown"
+                }
+                data["File"] = run.get("artifacts", [])[0].get("location", {}).get("uri", "Unknown")
+                data["Weakness"] = "Safe"
+                data["Source"] = remove_comments(src_data)
+                formatted_data.append(data)
+                print(f"Safe file: {data['File']}")
 
     return formatted_data
 

@@ -37,6 +37,12 @@ def check_response(response_df, test_case) -> tuple[bool, str]:
     vulnerability_symbol = "Weakness"
     value = test_case[vulnerability_symbol]
 
+    if value == "Safe" and response_df.empty:
+        return True, ""
+    elif value == "Safe" and not response_df.empty:
+        code = response_df.iloc[0, response_df.columns.get_loc("Code")]
+        return False, code
+    
     # Use .str.startswith for partial match, or == for exact match
     matches = response_df[vulnerability_symbol].str.startswith(value)
     matching_indices = response_df.index[matches].tolist()
