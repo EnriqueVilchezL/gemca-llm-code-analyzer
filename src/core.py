@@ -16,11 +16,10 @@ import google.generativeai as genai
 from google.genai import types
 
 # Load environment variables
-load_dotenv(".env")
-API_KEYS : list = os.getenv("API_KEYS")
+load_dotenv("./.env")
+API_KEYS : list = os.getenv("API_KEYS").split(",")
 API_KEY_INDEX = 0
-genai.configure(API_KEYS[API_KEY_INDEX])
-
+genai.configure(api_key=API_KEYS[API_KEY_INDEX])
 # Configure logging
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -147,7 +146,7 @@ def send_code_to_llm(code: str, verbose: bool = True) -> str:
         if len(API_KEYS) <= API_KEY_INDEX:
             API_KEY_INDEX = 0
             raise e
-        genai.configure(API_KEYS[API_KEY_INDEX])
+        genai.configure(api_key=API_KEYS[API_KEY_INDEX])
         llm = GenAIEvaluator(
             model=genai.GenerativeModel(
                 "gemini-2.0-flash",

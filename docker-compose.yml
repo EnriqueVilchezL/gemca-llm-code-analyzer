@@ -1,0 +1,6 @@
+version: "3.8"
+
+services:
+  gemca-llm-code-analyzer:
+    build: .
+    container_name: gemca-llm-code-analyzer

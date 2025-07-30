@@ -1,26 +1,36 @@
 from test_case_data_load import read_all_test_cases
 from test_core import check_response
 from core import send_code_to_llm, parse_response_to_dataframe
+from dotenv import load_dotenv
 
 from test_configuration import CSHARP_TEST_DIR, PHP_TEST_DIR, CSHARP_RESULTS_DIR, PHP_RESULTS_DIR, JAVA_TEST_DIR, JAVA_RESULTS_DIR
 import time
 import pandas as pd
+import os
+
+PATHS = {
+    "csharp": [CSHARP_TEST_DIR, CSHARP_RESULTS_DIR],
+    "php": [PHP_TEST_DIR, PHP_RESULTS_DIR],
+    "java": [JAVA_TEST_DIR, JAVA_RESULTS_DIR]
+}
 
 if __name__ == "__main__":
+    load_dotenv("./.env")
     # Set display options for Pandas DataFrame
     pd.set_option('display.max_columns', None)
+    DATASET = os.getenv("DATASET")
+    base_path, results_path = PATHS[DATASET]
 
-    base_path = PHP_TEST_DIR
-    results_path = PHP_RESULTS_DIR
-
-    iterations = 12
+    iterations = int(os.getenv("ITERATIONS", 1))
+    TOTAL_TEST_CASES = int(os.getenv("TOTAL_TEST_CASES", 100))
     iterations_list = []
     total_test_cases_list = []
     hit_test_cases_list = []
     accuracy_list = []
 
+
     for iter in range(11, iterations):
-        total_test_cases = 100
+        total_test_cases = TOTAL_TEST_CASES
         test_cases = read_all_test_cases(base_path, max_dirs=100)
         hit_test_cases = 0
         
