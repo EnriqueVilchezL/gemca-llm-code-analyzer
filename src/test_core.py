@@ -25,7 +25,7 @@ def fuzzy_substring_match(substring, string, threshold=0.8):
     return False
 
 # Check te response
-def check_response(response_df, test_case) -> tuple[bool, str]:
+def check_response(response_df, test_case) -> tuple[bool, str, str, str]:
     """
     Checks if the response DataFrame contains the expected vulnerability and source code.
     Args:
@@ -37,12 +37,25 @@ def check_response(response_df, test_case) -> tuple[bool, str]:
     vulnerability_symbol = "Weakness"
     value = test_case[vulnerability_symbol]
 
-    if value == "Safe" and response_df.empty:
-        return True, ""
-    elif value == "Safe" and not response_df.empty:
-        code = response_df.iloc[0, response_df.columns.get_loc("Code")]
-        return False, code
-    
+    if value.startswith("Safe:") and response_df.empty:
+        print(f"Hit Safe: No response from LLM for safe file {test_case['File']}.")
+        return True, "", "Hit Safe", "No issues found"
+
+    elif value.startswith("Safe:") and not response_df.empty:
+        weakness = response_df[vulnerability_symbol].values
+        if test_case["Weakness"].replace("Safe: ", "") in weakness:
+            print(f"Failed Safe: Response from LLM for safe file {test_case['File']}.")
+            matches = response_df[vulnerability_symbol].str.startswith(value.replace("Safe: ", ""))
+            matching_indices = response_df.index[matches].tolist()
+
+            for idx in matching_indices:
+                code = response_df.iloc[idx, response_df.columns.get_loc("Code")]
+
+            return False, code, "Failed Safe", "CWE found"
+        else:
+            print(f"Hit Safe: No issues found in safe file {test_case['File']}.")
+            return True, "", "Hit Safe", "No matching CWE found"
+
     # Use .str.startswith for partial match, or == for exact match
     matches = response_df[vulnerability_symbol].str.startswith(value)
     matching_indices = response_df.index[matches].tolist()
@@ -62,12 +75,12 @@ def check_response(response_df, test_case) -> tuple[bool, str]:
 
         if match_found:
             print(f"Hit CWE: {value} in file {test_case['File']}")
-            return True, code
+            return True, code, "Hit CWE", "Issue found"
         else:
             print(f"Failed to accert CWE: {value} in file {test_case['File']}. Code does not match.")
             print(f"Code: {code}")
             print(f"Test Case Line: {test_case['Line']}")
-            return False, code
+            return False, code, "Failed CWE", "No matching code found"
 
     print(f"Failed to accert CWE: {value} in file {test_case['File']}. No matching CWE found.")
-    return False, ""
+    return False, "", "Failed CWE", "No matching CWE found"

@@ -20,13 +20,13 @@ if __name__ == "__main__":
     accuracy_list = []
 
     for iter in range(11, iterations):
-        total_test_cases = 100
-        test_cases = read_all_test_cases(base_path, max_dirs=100)
+        total_test_cases = 5
+        test_cases = read_all_test_cases(base_path, max_dirs=5)
         hit_test_cases = 0
         
-        hit_cwe_list = []
         llm_code_list = []
-        hit_code_list = []
+        result_list = []
+        result_type_list = []
         test_case_line_list = []
         test_case_weakness_list = []
         test_case_file_list = []
@@ -38,22 +38,14 @@ if __name__ == "__main__":
 
             response = send_code_to_llm(code_combined, verbose=False)
             response_df = parse_response_to_dataframe(response)
-            hit, llm_code = check_response(response_df, test_case)
+            hit, llm_code, result, result_type = check_response(response_df, test_case)
 
             if hit:
                 hit_test_cases += 1
 
-            hit_cwe = False
-            if llm_code != "":
-                hit_cwe = True
-
-            hit_code = False
-            if hit:
-                hit_code = hit
-            
-            hit_cwe_list.append(hit_cwe)
             llm_code_list.append(llm_code)
-            hit_code_list.append(hit_code)
+            result_list.append(result)
+            result_type_list.append(result_type)
             test_case_line_list.append(test_case["Line"])
             test_case_weakness_list.append(test_case["Weakness"])
             test_case_file_list.append(test_case["File"])
@@ -68,8 +60,8 @@ if __name__ == "__main__":
             "Test Case File": test_case_file_list,
             "Test Case Code": test_case_code_list,
             "Test Case Line": test_case_line_list,
-            "LLM Hit CWE": hit_cwe_list,
-            "LLM Hit Code": hit_code_list,
+            "Result": result_list,
+            "Result Type": result_type_list,
             "LLM Code": llm_code_list,
             "LLM Complete Response": llm_complete_responses
         })

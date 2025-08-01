@@ -15,10 +15,11 @@ def format_sarif_and_src(sarif_data, src_data):
     formatted_data = []
 
     # Only accepted cases
-    if sarif_data.get("properties", {}).get("status", "") != "deprecated":
+    for run in sarif_data.get("runs", []):
+
+        if run.get("properties", {}).get("status", "") != "deprecated":
         # Format the SARIF and source data into a dictionary
-        for run in sarif_data.get("runs", []):
-            if sarif_data.get("properties", {}).get("state", "") == "bad":
+            if run.get("properties", {}).get("state", "") == "bad":
                 for result in run.get("results", []):
                     
                     rule_id = result.get("ruleId", "Unknown")
@@ -42,10 +43,10 @@ def format_sarif_and_src(sarif_data, src_data):
                             data["Weakness"] = rule_id
                             data["Line"] = remove_comments(source_lines[start_line - 1].strip() if start_line - 1 <= len(source_lines) else "Unknown")
                             data["Source"] = remove_comments(src_data)
-                            formatted_data.append(data)
+                            #formatted_data.append(data)
 
             # It is a safe file
-            elif sarif_data.get("properties", {}).get("state", "") == "good":
+            elif run.get("properties", {}).get("state", "") == "good":
                 data = {
                     "Weakness": "Unknown",
                     "File": "Unknown",
@@ -53,7 +54,9 @@ def format_sarif_and_src(sarif_data, src_data):
                     "Source": "Unknown"
                 }
                 data["File"] = run.get("artifacts", [])[0].get("location", {}).get("uri", "Unknown")
-                data["Weakness"] = "Safe"
+                weakness = re.findall(r'CWE_\d+', data["File"])[0].replace("_", "-")
+                print(weakness)
+                data["Weakness"] = f"Safe: {weakness}"
                 data["Source"] = remove_comments(src_data)
                 formatted_data.append(data)
                 print(f"Safe file: {data['File']}")
