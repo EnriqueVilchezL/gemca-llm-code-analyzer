@@ -29,7 +29,7 @@ if __name__ == "__main__":
     accuracy_list = []
 
 
-    for iter in range(11, iterations):
+    for iter in range(0, iterations):
         total_test_cases = TOTAL_TEST_CASES
         test_cases = read_all_test_cases(base_path, max_dirs=100)
         hit_test_cases = 0

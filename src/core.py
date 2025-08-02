@@ -133,30 +133,24 @@ def send_code_to_llm(code: str, verbose: bool = True) -> str:
 
     # payload = {"standard": STANDARD_TEXT, "code_snippet": code}
     # response = llm.evaluate(payload)
+    llm = GenAIEvaluator(
+        model=genai.GenerativeModel(
+            "gemini-2.0-flash",
+            system_instruction=SYSTEM_PROMPT.format(standard=STANDARD_TEXT)
+        ),
+        human_prompt=HUMAN_PROMPT,
+    )
+
+    payload = {"code_snippet": code}
     try:
-        llm = GenAIEvaluator(
-            model=genai.GenerativeModel(
-                "gemini-2.0-flash",
-                system_instruction=SYSTEM_PROMPT.format(standard=STANDARD_TEXT)
-            ),
-            human_prompt=HUMAN_PROMPT,
-        )
+        response = llm.evaluate(input_variables=payload)
     except Exception as e:
         API_KEY_INDEX += 1
         if len(API_KEYS) <= API_KEY_INDEX:
             API_KEY_INDEX = 0
             raise e
         genai.configure(api_key=API_KEYS[API_KEY_INDEX])
-        llm = GenAIEvaluator(
-            model=genai.GenerativeModel(
-                "gemini-2.0-flash",
-                system_instruction=SYSTEM_PROMPT.format(standard=STANDARD_TEXT)
-            ),
-            human_prompt=HUMAN_PROMPT,
-        )
-
-    payload = {"code_snippet": code}
-    response = llm.evaluate(input_variables=payload)
+        response = llm.evaluate(input_variables=payload) 
 
     if verbose:
         logger.info(f"LLM response: {response}")

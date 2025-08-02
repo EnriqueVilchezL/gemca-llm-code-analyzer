@@ -15,10 +15,11 @@ def format_sarif_and_src(sarif_data, src_data):
     formatted_data = []
 
     # Only accepted cases
-    if sarif_data.get("properties", {}).get("status", "") != "deprecated":
+    for run in sarif_data.get("runs", []):
+
+        if run.get("properties", {}).get("status", "") != "deprecated":
         # Format the SARIF and source data into a dictionary
-        for run in sarif_data.get("runs", []):
-            if sarif_data.get("properties", {}).get("state", "") == "bad":
+            if run.get("properties", {}).get("state", "") == "bad":
                 for result in run.get("results", []):
                     
                     rule_id = result.get("ruleId", "Unknown")
