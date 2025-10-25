@@ -1,6 +1,6 @@
+from tools.file import File
 import zipfile
 import logging
-from file import File
 
 
 class ZipFileProcessor:

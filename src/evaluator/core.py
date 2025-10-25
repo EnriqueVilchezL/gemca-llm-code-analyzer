@@ -8,9 +8,9 @@ import shutil
 import PyPDF2
 import pandas as pd
 from dotenv import load_dotenv
-from zip_processor import ZipFileProcessor
-from llm_evaluator import GenAIEvaluator
-from system_prompt import SYSTEM_PROMPT
+from tools import ZipFileProcessor
+from evaluator.llm_evaluator import GenAIEvaluator
+from constants import SYSTEM_PROMPT
 import google.generativeai as genai
 
 # Load environment variables

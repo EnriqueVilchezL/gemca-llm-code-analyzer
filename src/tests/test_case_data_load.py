@@ -1,5 +1,5 @@
 import json
-from cwes import cwe_list
+from constants.cwes import cwe_list
 import random
 import re
 

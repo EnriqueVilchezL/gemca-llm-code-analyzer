@@ -1,7 +1,6 @@
 import gradio as gr
-from core import save_uploaded_zip, evaluate_zip, parse_response_to_dataframe
-from styler import style_dataframe
-
+from evaluator import save_uploaded_zip, evaluate_zip, parse_response_to_dataframe
+from tools import style_dataframe
 
 def process_zip_and_display(zip_file) -> gr.Dataframe:
     """

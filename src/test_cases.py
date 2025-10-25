@@ -1,10 +1,10 @@
-from test_case_data_load import read_all_test_cases
-from test_core import check_response
-from core import send_code_to_llm, parse_response_to_dataframe
-
-from test_configuration import CSHARP_TEST_DIR, PHP_TEST_DIR, CSHARP_RESULTS_DIR, PHP_RESULTS_DIR, JAVA_TEST_DIR, JAVA_RESULTS_DIR
-import time
+from evaluator import send_code_to_llm, parse_response_to_dataframe
+from tests import CSHARP_TEST_DIR, PHP_TEST_DIR, CSHARP_RESULTS_DIR
+from tests import PHP_RESULTS_DIR, JAVA_TEST_DIR, JAVA_RESULTS_DIR
+from tests import read_all_test_cases
+from tests import check_response
 import pandas as pd
+import time
 
 if __name__ == "__main__":
     # Set display options for Pandas DataFrame

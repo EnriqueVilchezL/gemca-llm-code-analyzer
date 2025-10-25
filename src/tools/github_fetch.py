@@ -1,8 +1,7 @@
 import requests
 import logging
 from collections import deque
-
-from file import File
+from tools.file import File
 
 
 class GitHubRepositoryFetcher:
