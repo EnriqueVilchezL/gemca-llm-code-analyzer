@@ -14,8 +14,7 @@ from constants import SYSTEM_PROMPT
 import google.generativeai as genai
 
 # Load environment variables
-load_dotenv()
-genai.configure(api_key=os.getenv("API_KEY"))
+genai.configure(api_key="AIzaSyBoBLM2TIFfkODNON5_axqaUvnSbSFEKcg")
 
 # Configure logging
 logger = logging.getLogger(__name__)

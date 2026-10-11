@@ -5,23 +5,26 @@ from tests import read_all_test_cases
 from tests import check_response
 import pandas as pd
 import time
+import os
 
 if __name__ == "__main__":
+
     # Set display options for Pandas DataFrame
     pd.set_option('display.max_columns', None)
 
     base_path = PHP_TEST_DIR
     results_path = PHP_RESULTS_DIR
 
-    iterations = 12
+    iterations = 15
     iterations_list = []
     total_test_cases_list = []
     hit_test_cases_list = []
     accuracy_list = []
 
-    for iter in range(11, iterations):
+    test_cases = read_all_test_cases(base_path, max_dirs=100)
+
+    for iter in range(iterations):
         total_test_cases = 100
-        test_cases = read_all_test_cases(base_path, max_dirs=100)
         hit_test_cases = 0
         
         hit_cwe_list = []
@@ -59,8 +62,6 @@ if __name__ == "__main__":
             test_case_file_list.append(test_case["File"])
             test_case_code_list.append(test_case["Source"])
             llm_complete_responses.append(response)
-
-            time.sleep(5)
 
         # Create a DataFrame with the results
         results_df = pd.DataFrame({

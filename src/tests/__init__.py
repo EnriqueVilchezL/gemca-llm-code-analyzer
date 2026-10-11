@@ -1,2 +1,4 @@
 from tests.test_case_data_load import read_all_test_cases
 from tests.test_core import check_response
+from tests.test_configuration import CSHARP_TEST_DIR, PHP_TEST_DIR, JAVA_TEST_DIR
+from tests.test_configuration import CSHARP_RESULTS_DIR, PHP_RESULTS_DIR, JAVA_RESULTS_DIR
